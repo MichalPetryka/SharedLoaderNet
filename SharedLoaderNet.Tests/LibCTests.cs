@@ -28,7 +28,7 @@ namespace SharedLoaderNet.Tests
 		{
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 				return;
-			using (SharedLibrary sl = new SharedLibrary("libc.so.6"))
+			using (SharedLibrary sl = new SharedLibrary(TestUtils.LibC))
 			{
 				Assert.Equal(GetProcessId(), sl.GetDelegate<getpid>(nameof(getpid))());
 			}
@@ -40,7 +40,7 @@ namespace SharedLoaderNet.Tests
 		{
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 				return;
-			using (SharedLibrary sl = new("libc.so.6"))
+			using (SharedLibrary sl = new(TestUtils.LibC))
 			{
 				Assert.Equal(GetProcessId(), ((delegate* unmanaged<int>)sl.GetPointer(nameof(getpid)))());
 			}
@@ -52,7 +52,7 @@ namespace SharedLoaderNet.Tests
 		{
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 				return;
-			using (SharedLibrary sl = new SharedLibrary("a.test", "b.zip", "c.png", "e\0.jpg", "libc.so.6", "d.txt", ""))
+			using (SharedLibrary sl = new SharedLibrary("a.test", "b.zip", "c.png", "e\0.jpg", TestUtils.LibC, "d.txt", ""))
 			{
 				Assert.Equal(GetProcessId(), sl.GetDelegate<getpid>(nameof(getpid))());
 			}
