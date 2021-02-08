@@ -95,6 +95,11 @@ namespace SharedLoaderNet
 			return Marshal.GetDelegateForFunctionPointer<T>(Loader.GetSymbol(_module, name));
 		}
 
+		public Delegate GetDelegate(string name, Type type)
+		{
+			return Marshal.GetDelegateForFunctionPointer(Loader.GetSymbol(_module, name), type);
+		}
+
 		private void Free()
 		{
 			lock (_freeLock)
