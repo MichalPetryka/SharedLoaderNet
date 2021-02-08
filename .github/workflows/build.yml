@@ -24,7 +24,7 @@ jobs:
       run: dotnet restore
 
     - name: Build
-      run: dotnet publish -c Release "SharedLoaderNet"
+      run: dotnet build -c Release "SharedLoaderNet"
         
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2
