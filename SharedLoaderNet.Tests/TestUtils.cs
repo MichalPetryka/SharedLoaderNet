@@ -13,7 +13,11 @@ namespace SharedLoaderNet.Tests
 				if (_libC != null)
 					return _libC;
 				LibDlLoader loader = new LibDlLoader();
-				foreach (string libc in new[] { "libc.so", "libc.so.6", "libc.so.5", "libc.so.4", "libc.so.3", "libc.so.2", "libc.so.1" })
+				foreach (string libc in new[]
+				{
+					"libc.so", "libc.so.6", "libc.so.5", "libc.so.4", "libc.so.3", "libc.so.2", "libc.so.1",
+					"libc.dylib", "libc.dylib.6", "libc.dylib.5", "libc.dylib.4", "libc.dylib.3", "libc.dylib.2", "libc.dylib.1"
+				})
 				{
 					try
 					{
