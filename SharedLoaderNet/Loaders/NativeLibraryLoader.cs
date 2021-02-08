@@ -24,6 +24,8 @@ namespace SharedLoaderNet.Loaders
 #else
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
+			if (string.IsNullOrWhiteSpace(name) || name.Trim() == "\0")
+				throw new ArgumentException("Empty or whitespace module names are not allowed", nameof(name));
 			return NativeLibrary.Load(name);
 #endif
 		}
@@ -35,6 +37,8 @@ namespace SharedLoaderNet.Loaders
 #else
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
+			if (string.IsNullOrWhiteSpace(name) || name.Trim() == "\0")
+				throw new ArgumentException("Empty or whitespace symbol names are not allowed", nameof(name));
 			return NativeLibrary.GetExport(module, name);
 #endif
 		}

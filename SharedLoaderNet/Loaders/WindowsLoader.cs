@@ -24,6 +24,8 @@ namespace SharedLoaderNet.Loaders
 		{
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
+			if (string.IsNullOrWhiteSpace(name) || name.Trim() == "\0")
+				throw new ArgumentException("Empty or whitespace module names are not allowed", nameof(name));
 			IntPtr module = LoadLibrary(name);
 			if (module == IntPtr.Zero)
 			{
@@ -37,6 +39,8 @@ namespace SharedLoaderNet.Loaders
 		{
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
+			if (string.IsNullOrWhiteSpace(name) || name.Trim() == "\0")
+				throw new ArgumentException("Empty or whitespace symbol names are not allowed", nameof(name));
 			IntPtr symbol = GetProcAddress(module, name);
 			if (symbol == IntPtr.Zero)
 			{

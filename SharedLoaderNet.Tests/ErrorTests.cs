@@ -12,7 +12,6 @@ namespace SharedLoaderNet.Tests
 		[InlineData("c.png")]
 		[InlineData("d.txt")]
 		[InlineData("e\0.jpg")]
-		[InlineData("")]
 		public void ErrorLoadTest(string name)
 		{
 			Assert.Throws<DllNotFoundException>(() =>
@@ -23,31 +22,72 @@ namespace SharedLoaderNet.Tests
 			});
 		}
 
+		[Fact]
+		public void NullLoadTest()
+		{
+			Assert.Throws<ArgumentNullException>(() =>
+			{
+				using (SharedLibrary sl = new SharedLibrary(null, true))
+				{
+				}
+			});
+		}
+
 		[Theory]
 		[InlineData("")]
+		[InlineData(" ")]
+		[InlineData("\0")]
+		[InlineData(" \0 ")]
+		public void EmptyOrWhitespaceLoadTest(string name)
+		{
+			Assert.Throws<ArgumentException>(() =>
+			{
+				using (SharedLibrary sl = new SharedLibrary(name))
+				{
+				}
+			});
+		}
+
+		[Theory]
 		[InlineData("qwerty")]
 		[InlineData("qwe\0rty")]
 		public unsafe void ErrorSymbolTest(string name)
 		{
-			Assert.Throws<EntryPointNotFoundException>(() =>
+			using (SharedLibrary sl = new SharedLibrary(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Kernel32.dll" : "libc.so"))
 			{
-				using (SharedLibrary sl = new SharedLibrary(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Kernel32.dll" : "libc.so"))
+				Assert.Throws<EntryPointNotFoundException>(() =>
 				{
 					Assert.Equal(IntPtr.Zero, new IntPtr(sl.GetPointer(name)));
-				}
-			});
+				});
+			}
 		}
 
 		[Fact]
 		public unsafe void NullSymbolTest()
 		{
-			Assert.Throws<ArgumentNullException>(() =>
+			using (SharedLibrary sl = new SharedLibrary(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Kernel32.dll" : "libc.so"))
 			{
-				using (SharedLibrary sl = new SharedLibrary(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Kernel32.dll" : "libc.so"))
+				Assert.Throws<ArgumentNullException>(() =>
 				{
 					Assert.Equal(IntPtr.Zero, new IntPtr(sl.GetPointer(null)));
-				}
-			});
+				});
+			}
+		}
+
+		[Theory]
+		[InlineData("")]
+		[InlineData(" ")]
+		[InlineData("\0")]
+		[InlineData(" \0 ")]
+		public unsafe void EmptyOrWhitespaceSymbolTest(string name)
+		{
+			using (SharedLibrary sl = new SharedLibrary(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Kernel32.dll" : "libc.so"))
+			{
+				Assert.Throws<ArgumentException>(() =>
+				{
+					Assert.Equal(IntPtr.Zero, new IntPtr(sl.GetPointer(name)));
+				});
+			}
 		}
 
 		[Theory]

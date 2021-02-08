@@ -17,7 +17,6 @@ namespace SharedLoaderNet.Tests
 							.Where(loader => (loader ?? throw new NullReferenceException()).Supported);
 
 		[Theory]
-		[InlineData("")]
 		[InlineData("a.txt")]
 		[InlineData("b.zip")]
 		[InlineData("c\0.png")]
@@ -32,26 +31,53 @@ namespace SharedLoaderNet.Tests
 			}
 		}
 
+		[Fact]
+		public void NullPath()
+		{
+			foreach (ILibraryLoader loader in Loaders)
+			{
+				Assert.Throws<ArgumentNullException>(() =>
+				{
+					Assert.Equal(IntPtr.Zero, loader.Load(null));
+				});
+			}
+		}
+
 		[Theory]
 		[InlineData("")]
+		[InlineData(" ")]
+		[InlineData("\0")]
+		[InlineData(" \0 ")]
+		public void EmptyOrWhitespacePath(string name)
+		{
+			foreach (ILibraryLoader loader in Loaders)
+			{
+				Assert.Throws<ArgumentException>(() =>
+				{
+					Assert.Equal(IntPtr.Zero, loader.Load(name));
+				});
+			}
+		}
+
+		[Theory]
 		[InlineData("qwerty")]
 		[InlineData("qwe\0rty")]
 		public void InvalidSymbol(string name)
 		{
 			foreach (ILibraryLoader loader in Loaders)
 			{
-				Assert.Equal(loader.InnerExceptionType, Assert.Throws<EntryPointNotFoundException>(() =>
+				IntPtr module = loader.Load(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Kernel32.dll" : "libc.so");
+				try
 				{
-					IntPtr module = loader.Load(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Kernel32.dll" : "libc.so");
-					try
+					Assert.Equal(loader.InnerExceptionType, Assert.Throws<EntryPointNotFoundException>(() =>
 					{
 						Assert.Equal(IntPtr.Zero, loader.GetSymbol(module, name));
-					}
-					finally
-					{
-						loader.Free(module);
-					}
-				}).InnerException?.GetType());
+					}).InnerException?.GetType());
+				}
+				finally
+				{
+					loader.Free(module);
+				}
 			}
 		}
 
@@ -60,18 +86,42 @@ namespace SharedLoaderNet.Tests
 		{
 			foreach (ILibraryLoader loader in Loaders)
 			{
-				Assert.Throws<ArgumentNullException>(() =>
+				IntPtr module = loader.Load(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Kernel32.dll" : "libc.so");
+				try
 				{
-					IntPtr module = loader.Load(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Kernel32.dll" : "libc.so");
-					try
+					Assert.Throws<ArgumentNullException>(() =>
 					{
 						Assert.Equal(IntPtr.Zero, loader.GetSymbol(module, null));
-					}
-					finally
+					});
+				}
+				finally
+				{
+					loader.Free(module);
+				}
+			}
+		}
+
+		[Theory]
+		[InlineData("")]
+		[InlineData(" ")]
+		[InlineData("\0")]
+		[InlineData(" \0 ")]
+		public void EmptyOrWhitespaceSymbol(string name)
+		{
+			foreach (ILibraryLoader loader in Loaders)
+			{
+				IntPtr module = loader.Load(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Kernel32.dll" : "libc.so");
+				try
+				{
+					Assert.Throws<ArgumentException>(() =>
 					{
-						loader.Free(module);
-					}
-				});
+						Assert.Equal(IntPtr.Zero, loader.GetSymbol(module, name));
+					});
+				}
+				finally
+				{
+					loader.Free(module);
+				}
 			}
 		}
 
@@ -84,6 +134,18 @@ namespace SharedLoaderNet.Tests
 				{
 					loader.Free(IntPtr.Zero);
 				});
+			}
+		}
+
+		[Fact]
+		public void NativeLibrary()
+		{
+			NativeLibraryLoader loader = new NativeLibraryLoader();
+			if (!loader.Supported)
+			{
+				Assert.Throws<NotSupportedException>(() => { loader.Load(null); });
+				Assert.Throws<NotSupportedException>(() => { loader.GetSymbol(IntPtr.Zero, null); });
+				Assert.Throws<NotSupportedException>(() => { loader.Free(IntPtr.Zero); });
 			}
 		}
 	}

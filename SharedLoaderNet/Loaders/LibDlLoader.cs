@@ -67,6 +67,8 @@ namespace SharedLoaderNet.Loaders
 		{
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
+			if (string.IsNullOrWhiteSpace(name) || name.Trim() == "\0")
+				throw new ArgumentException("Empty or whitespace module names are not allowed", nameof(name));
 			IntPtr module = DlOpen(name, LibDlFlags.Local | LibDlFlags.Now);
 			if (module == IntPtr.Zero)
 			{
@@ -79,6 +81,8 @@ namespace SharedLoaderNet.Loaders
 		{
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
+			if (string.IsNullOrWhiteSpace(name) || name.Trim() == "\0")
+				throw new ArgumentException("Empty or whitespace symbol names are not allowed", nameof(name));
 			IntPtr symbol = DlSym(module, name);
 			if (symbol == IntPtr.Zero)
 			{
