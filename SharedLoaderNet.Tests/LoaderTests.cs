@@ -66,7 +66,7 @@ namespace SharedLoaderNet.Tests
 		{
 			foreach (ILibraryLoader loader in Loaders)
 			{
-				IntPtr module = loader.Load(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Kernel32.dll" : "libc.so");
+				IntPtr module = loader.Load(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Kernel32.dll" : "libc.so.6");
 				try
 				{
 					Assert.Equal(loader.InnerExceptionType, Assert.Throws<EntryPointNotFoundException>(() =>
@@ -86,7 +86,7 @@ namespace SharedLoaderNet.Tests
 		{
 			foreach (ILibraryLoader loader in Loaders)
 			{
-				IntPtr module = loader.Load(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Kernel32.dll" : "libc.so");
+				IntPtr module = loader.Load(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Kernel32.dll" : "libc.so.6");
 				try
 				{
 					Assert.Throws<ArgumentNullException>(() =>
@@ -110,7 +110,7 @@ namespace SharedLoaderNet.Tests
 		{
 			foreach (ILibraryLoader loader in Loaders)
 			{
-				IntPtr module = loader.Load(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Kernel32.dll" : "libc.so");
+				IntPtr module = loader.Load(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Kernel32.dll" : "libc.so.6");
 				try
 				{
 					Assert.Throws<ArgumentException>(() =>

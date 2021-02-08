@@ -53,7 +53,7 @@ namespace SharedLoaderNet.Tests
 		[InlineData("qwe\0rty")]
 		public unsafe void ErrorSymbolTest(string name)
 		{
-			using (SharedLibrary sl = new SharedLibrary(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Kernel32.dll" : "libc.so"))
+			using (SharedLibrary sl = new SharedLibrary(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Kernel32.dll" : "libc.so.6"))
 			{
 				Assert.Throws<EntryPointNotFoundException>(() =>
 				{
@@ -65,7 +65,7 @@ namespace SharedLoaderNet.Tests
 		[Fact]
 		public unsafe void NullSymbolTest()
 		{
-			using (SharedLibrary sl = new SharedLibrary(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Kernel32.dll" : "libc.so"))
+			using (SharedLibrary sl = new SharedLibrary(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Kernel32.dll" : "libc.so.6"))
 			{
 				Assert.Throws<ArgumentNullException>(() =>
 				{
@@ -81,7 +81,7 @@ namespace SharedLoaderNet.Tests
 		[InlineData(" \0 ")]
 		public unsafe void EmptyOrWhitespaceSymbolTest(string name)
 		{
-			using (SharedLibrary sl = new SharedLibrary(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Kernel32.dll" : "libc.so"))
+			using (SharedLibrary sl = new SharedLibrary(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Kernel32.dll" : "libc.so.6"))
 			{
 				Assert.Throws<ArgumentException>(() =>
 				{
