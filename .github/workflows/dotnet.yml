@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   test:
-    name: .Net on ${{ matrix.os }}
+    name: .Net ${{ matrix.dotnet }} with ${{ matrix.framework }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -20,7 +20,7 @@ jobs:
         exclude:
          - os: ubuntu-latest
            framework: 'net48'
-         - os: ubuntu-latest
+         - os: macos-latest
            framework: 'net48'
     timeout-minutes: 30
     
@@ -36,5 +36,5 @@ jobs:
       with:
         dotnet-version: ${{ matrix.dotnet }}
         
-    - name: Tests
+    - name: Test ${{ matrix.framework }}
       run: dotnet test --framework ${{ matrix.framework }}
