@@ -30,4 +30,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: SharedLoaderNet
-        path: SharedLoaderNet/Release
+        path: SharedLoaderNet/bin/Release
